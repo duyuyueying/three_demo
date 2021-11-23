@@ -8,6 +8,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 export default {
   data(){
     return {
@@ -68,12 +69,14 @@ export default {
       this.setCamera()
       this.setScene()
       this.setRenderer()
+      const pmremGenerator = new THREE.PMREMGenerator( this.renderer );
+      this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture
       this.setStats()
       this.setControls()
       // this.generateGround()
       // this.setLight()
       this.loadGlb()
-      this.render()
+      
     },
     setCamera() {
       this.camera = new THREE.PerspectiveCamera(45, this.width/this.height, 1, 100)
@@ -105,17 +108,29 @@ export default {
     },
     loadGlb() {
       const dracoLoader = new DRACOLoader();
-			dracoLoader.setDecoderPath( 'three/examples/js/libs/draco/gltf/' );
+			dracoLoader.setDecoderPath( 'three/js/libs/draco/gltf/');
+      console.log(dracoLoader)
       const loader = new GLTFLoader()
       loader.setDRACOLoader( dracoLoader );
       loader.load('./LittlestTokyo.glb', (gltf) => {
         const model = gltf.scene
+        model.position.set(1,1,0)
+        model.scale.set(0.01, 0.01, 0.01)
         this.scene.add(model)
 
+        this.mixer = new THREE.AnimationMixer(model)
+        this.mixer.clipAction(gltf.animations[0]).play()
+        this.render()
+      }, (progress) => {
+        // 我是进度条...
+        console.log(progress)
       })
     },
     render() {
       requestAnimationFrame(this.render.bind(this))
+      const delta = this.clock.getDelta()
+      this.mixer.update(delta)
+
       this.renderer.render(this.scene, this.camera)
       this.stats.update()
     }
