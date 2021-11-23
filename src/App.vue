@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import HelloWorld from './pages/skin_blend/webgl_animation_skinning_blending.vue'
+import HelloWorld from './pages/keyframes/webgl_animation_keyframes.vue'
 
 export default {
   name: 'App',
