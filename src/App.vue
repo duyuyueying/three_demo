@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import HelloWorld from './pages/keyframes/webgl_animation_keyframes.vue'
+import HelloWorld from './pages/multiple/webgl_animation_multiple.vue'
 
 export default {
   name: 'App',
