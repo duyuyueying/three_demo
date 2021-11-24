@@ -17,47 +17,9 @@ export default {
       renderer: null,
       width: window.innerWidth,
       height: window.innerHeight,
-      idleAction: null,
-      runAction: null,
-      walkAction: null,
-      actions: [],
-      setting: {
-          'show model': true,
-          'show skeleton': false,
-          'deactivate all': this.deactivateAllActions,
-          'activate all': this.activateAllActions,
-          'pause/continue': this.pauseContinue,
-          'make single step': this.toSingleStepMode,
-          'modify step size': 0.05,
-          'from walk to idle': ()=> {
-              this.prepareCrossFade( this.walkAction, this.idleAction, 1.0 );
-          },
-          'from idle to walk':()=> {
-
-              this.prepareCrossFade( this.idleAction, this.walkAction, 0.5 );
-
-          },
-          'from walk to run': () => {
-              this.prepareCrossFade( this.walkAction, this.runAction, 2.5 );
-          },
-          'from run to walk': ()=> {
-              this.prepareCrossFade( this.runAction, this.walkAction, 5.0 );
-          },
-          'use default duration': true,
-          'set custom duration': 3.5,
-          'modify idle weight': 0.0,
-          'modify walk weight': 1.0,
-          'modify run weight': 0.0,
-          'modify time scale': 1.0
-      },
       clock: null,
       stats: null,
       model: null, // 模型
-      skeleton: null, // 骨架
-      singleStepMode: false, // 是否是单步模式
-      sizeOfNextStep: 0,
-      crossFadeControls: [],
-      startAction: null
     }
   },
   mounted() {
@@ -67,14 +29,13 @@ export default {
     init() {
       this.clock = new THREE.Clock();
       this.setCamera()
-      this.setScene()
       this.setRenderer()
-      const pmremGenerator = new THREE.PMREMGenerator( this.renderer );
-      this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture
+      this.setScene()
+      
+      
+     
       this.setStats()
       this.setControls()
-      // this.generateGround()
-      // this.setLight()
       this.loadGlb()
       
     },
@@ -85,6 +46,8 @@ export default {
     setScene() {
       this.scene = new THREE.Scene()
       this.scene.background = new THREE.Color(0xbfe3dd)
+      const pmremGenerator = new THREE.PMREMGenerator( this.renderer );
+      this.scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture
     },
     setRenderer() {
       this.renderer = new THREE.WebGLRenderer({antialias: true})
@@ -109,13 +72,12 @@ export default {
     loadGlb() {
       const dracoLoader = new DRACOLoader();
 			dracoLoader.setDecoderPath( 'three/js/libs/draco/gltf/');
-      console.log(dracoLoader)
       const loader = new GLTFLoader()
       loader.setDRACOLoader( dracoLoader );
       loader.load('./LittlestTokyo.glb', (gltf) => {
         const model = gltf.scene
-        model.position.set(1,1,0)
-        model.scale.set(0.01, 0.01, 0.01)
+        model.position.set(0,0,0)
+        model.scale.set(0.005, 0.005, 0.005)
         this.scene.add(model)
 
         this.mixer = new THREE.AnimationMixer(model)
