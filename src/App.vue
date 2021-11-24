@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import HelloWorld from './pages/multiple/webgl_animation_multiple.vue'
+import HelloWorld from './pages/camera/webgl_camera.vue'
 
 export default {
   name: 'App',
